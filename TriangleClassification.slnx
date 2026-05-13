@@ -1,0 +1,5 @@
+<Solution>
+  <Project Path="TriangleClassification.Cli/TriangleClassification.Cli.csproj" />
+  <Project Path="TriangleClassification.Tests/TriangleClassification.Tests.csproj" />
+  <Project Path="TriangleClassification/TriangleClassification.csproj" />
+</Solution>
