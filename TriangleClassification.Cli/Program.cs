@@ -7,7 +7,7 @@ static void PrintResult(TriangleClassificationResult result)
 		EquilateralTriangle => "Equilateral triangle",
 		IsoscelesTriangle => "Isosceles triangle",
 		ScaleneTriangle => "Scalene triangle",
-		InvalidInput invalidInput => $"Invalid input: {string.Join(" ", invalidInput.Errors.Select(error => $"{error.ErrorType}: {error.Message}"))}",
+		InvalidInput invalidInput => $"Invalid input: {invalidInput.ErrorType}: {invalidInput.Message}",
 	};
 
 	Console.WriteLine(message);

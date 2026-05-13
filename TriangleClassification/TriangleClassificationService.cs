@@ -4,10 +4,10 @@ public static class TriangleClassificationService
 {
 	public static TriangleClassificationResult ClassifyTriangle(float sideALength, float sideBLength, float sideCLength)
 	{
-		var validationErrors = ValidateInput(sideALength, sideBLength, sideCLength);
-		if (validationErrors.Count > 0)
+		var validationError = ValidateInput(sideALength, sideBLength, sideCLength);
+		if (validationError != null)
 		{
-			return new InvalidInput(validationErrors);
+			return validationError;
 		}
 
 		if (FloatsAreEqual(sideALength, sideBLength) && FloatsAreEqual(sideBLength, sideCLength))
@@ -23,10 +23,8 @@ public static class TriangleClassificationService
 		return new ScaleneTriangle();
 	}
 
-	private static List<InputValidationError> ValidateInput(float sideALength, float sideBLength, float sideCLength)
+	private static InvalidInput? ValidateInput(float sideALength, float sideBLength, float sideCLength)
 	{
-		var validationErrors = new List<InputValidationError>();
-
 		// Check for valid side lengths
 		var nonPositiveSides = new List<string>();
 		if (sideALength <= 0) nonPositiveSides.Add("a");
@@ -34,33 +32,27 @@ public static class TriangleClassificationService
 		if (sideCLength <= 0) nonPositiveSides.Add("c");
 		if (nonPositiveSides.Count > 0)
 		{
-			validationErrors.Add(
-				new InputValidationError(
-					InputErrorType.SideLengthsMustBePositive,
-					$"{FormatSideList(nonPositiveSides)} must be positive."
-				)
-			);
+			return new InvalidInput(InputErrorType.SideLengthsMustBePositive, $"{FormatSideList(nonPositiveSides)} must be positive.");
 		}
 
+		// Validate the triangle inequality theorem
 		// The Triangle Inequality Theorem states that the sum of any 2 sides of a triangle must be greater than the length of the third side.
-		// Only check triangle inequality if all sides are positive to avoid unhelpful errors
-		if(nonPositiveSides.Count == 0) {
-			// When all sides are positive, there can at most be one violation of the theorem
-			if (sideALength + sideBLength <= sideCLength)
-			{
-				validationErrors.Add(new InputValidationError(InputErrorType.ViolatesTriangleInequality, "Length of sides a + b must be greater than c."));
-			}
-			else if (sideALength + sideCLength <= sideBLength)
-			{
-				validationErrors.Add(new InputValidationError(InputErrorType.ViolatesTriangleInequality, "Length of sides a + c must be greater than b."));
-			}
-			else if (sideBLength + sideCLength <= sideALength)
-			{
-				validationErrors.Add(new InputValidationError(InputErrorType.ViolatesTriangleInequality, "Length of sides b + c must be greater than a."));
-			}
+		// 	The triangle inequality is only checked if all sides are positive to avoid unhelpful errors
+		// 	When all sides are positive, there can at most be one violation of the theorem
+		if (sideALength + sideBLength <= sideCLength)
+		{
+			return new InvalidInput(InputErrorType.ViolatesTriangleInequality, "Length of sides a + b must be greater than c.");
+		}
+		if (sideALength + sideCLength <= sideBLength)
+		{
+			return new InvalidInput(InputErrorType.ViolatesTriangleInequality, "Length of sides a + c must be greater than b.");
+		}
+		if (sideBLength + sideCLength <= sideALength)
+		{
+			return new InvalidInput(InputErrorType.ViolatesTriangleInequality, "Length of sides b + c must be greater than a.");
 		}
 
-		return validationErrors;
+		return null;
 	}
 
 	public static bool FloatsAreEqual(float x, float y, float tolerance = 1e-6f)

@@ -16,32 +16,20 @@ public class TriangleClassificationTests
 	[TestCase(3, 0, 2, "Side b must be positive.")]
 	[TestCase(3, 0, 0, "Sides b and c must be positive.")]
 	[TestCase(-1, -3, -6, "Sides a, b, and c must be positive.")]
-	public void ClassifyTriangle_WithNonPositiveSides_ReturnsSideLengthsMustBePositiveError(float sideALength, float sideBLength, float sideCLength, string errorMessage)
+	public void ClassifyTriangle_WithNonPositiveSides_ReturnsSideLengthsMustBePositiveError(float sideALength, float sideBLength, float sideCLength, string expectedErrorMessage)
 	{
 		var result = TriangleClassificationService.ClassifyTriangle(sideALength, sideBLength, sideCLength);
 
-		Assert.That(result, Is.TypeOf<InvalidInput>());
-		Assert.That(
-			((InvalidInput)result).Errors,
-			Is.EqualTo(new[] {
-				new InputValidationError(InputErrorType.SideLengthsMustBePositive, errorMessage)
-			})
-		);
+		Assert.That(result, Is.EqualTo(new InvalidInput(InputErrorType.SideLengthsMustBePositive, expectedErrorMessage)));
 	}
 
 	[TestCase(1, 2, 3, "Length of sides a + b must be greater than c.")]
 	[TestCase(1, 3, 2, "Length of sides a + c must be greater than b.")]
 	[TestCase(3, 1, 2, "Length of sides b + c must be greater than a.")]
-	public void ClassifyTriangle_WhenAnyTwoSidesAreLessThanOrEqualToThird_ReturnsTriangleInequalityError(float sideALength, float sideBLength, float sideCLength, string errorMessage)
+	public void ClassifyTriangle_WhenAnyTwoSidesAreLessThanOrEqualToThird_ReturnsTriangleInequalityError(float sideALength, float sideBLength, float sideCLength, string expectedErrorMessage)
 	{
 		var result = TriangleClassificationService.ClassifyTriangle(sideALength, sideBLength, sideCLength);
 
-		Assert.That(result, Is.TypeOf<InvalidInput>());
-		Assert.That(
-			((InvalidInput)result).Errors,
-			Is.EqualTo(new[] {
-				new InputValidationError(InputErrorType.ViolatesTriangleInequality, errorMessage)
-			})
-		);
+		Assert.That(result, Is.EqualTo(new InvalidInput(InputErrorType.ViolatesTriangleInequality, expectedErrorMessage)));
 	}
 }

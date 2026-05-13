@@ -11,5 +11,4 @@ public enum InputErrorType
 	SideLengthsMustBePositive,
 	ViolatesTriangleInequality
 }
-public record InputValidationError(InputErrorType ErrorType, string Message);
-public record InvalidInput(IReadOnlyList<InputValidationError> Errors) : TriangleClassificationResult;
+public record InvalidInput(InputErrorType ErrorType, string Message) : TriangleClassificationResult;
